@@ -149,7 +149,8 @@ const {
  *         width: '1000px',
  *         height: '700px'
  *     },
- *     menuBarPosition: 'bottom'
+ *     menuBarPosition: 'bottom',
+ *     onDownload: (image) => {},
  *   },
  *   cssMaxWidth: 700,
  *   cssMaxHeight: 500,
@@ -181,7 +182,14 @@ class ImageEditor {
       const UIOption = options.includeUI;
       UIOption.usageStatistics = options.usageStatistics;
 
-      this.ui = new UI(wrapper, UIOption, this.getActions());
+      const uiActions = this.getActions();
+      this.ui = new UI(wrapper, UIOption, {
+        ...uiActions,
+        main: {
+          ...uiActions.main,
+          download: options.includeUI.onDownload ? () => options.includeUI.onDownload(this.toDataURL()) : uiActions.main.download,
+        },
+      });
       options = this.ui.setUiDefaultSelectionStyle(options);
     }
 
